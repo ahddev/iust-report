@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const reportCount = await prisma.report.count();
   const copyText = `حرصًا على تنظيم الشكوى، تم إنشاء موقع إلكتروني مخصص لتقديم الشكاوى بشكل رسمي ومرتب.
