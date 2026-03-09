@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 interface Report {
   id: string
   name: string
-  nationalId: string
   collegeId: string
   contactNumber: string
   issue: string
@@ -116,7 +115,6 @@ export function ReportsTable() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-right">الاسم</TableHead>
-                    <TableHead className="text-right">رقم الوطني</TableHead>
                     <TableHead className="text-right">رقم جامعي</TableHead>
                     <TableHead className="text-right">رقم الهاتف</TableHead>
                     <TableHead className="text-right">المشكلة</TableHead>
@@ -127,7 +125,6 @@ export function ReportsTable() {
                   {reports.map((report) => (
                     <TableRow key={report.id}>
                       <TableCell className="font-medium text-right">{report.name}</TableCell>
-                      <TableCell className="text-right">{report.nationalId}</TableCell>
                       <TableCell className="text-right">{report.collegeId}</TableCell>
                       <TableCell className="text-right">{report.contactNumber}</TableCell>
                       <TableCell className="max-w-md min-w-48">
@@ -181,11 +178,7 @@ export function ReportsTable() {
                       <span className="text-sm font-medium text-right">{report.name}</span>
                     </div>
                     <div className="flex justify-between items-start">
-                      <span className="text-sm font-medium text-gray-600">رقم الهوية:</span>
-                      <span className="text-sm text-right">{report.nationalId}</span>
-                    </div>
-                    <div className="flex justify-between items-start">
-                      <span className="text-sm font-medium text-gray-600">رقم الكلية:</span>
+                      <span className="text-sm font-medium text-gray-600">رقم جامعي:</span>
                       <span className="text-sm text-right">{report.collegeId}</span>
                     </div>
                     <div className="flex justify-between items-start">

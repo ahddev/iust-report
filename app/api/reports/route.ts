@@ -8,31 +8,42 @@ export async function POST(request: NextRequest) {
     console.log('POST request received')
     const body = await request.json()
     console.log('Received request body:', body)
-    const { name, nationalId, collegeId, contactNumber, issue } = body
+    const { name, collegeId, contactNumber, issue } = body
 
-    // Validate required fields
-    if (!name || !nationalId || !collegeId || !contactNumber || !issue) {
-      console.log('Validation failed: missing required fields')
+    // Validate required fields and collect missing ones
+    const fieldLabels: Record<string, string> = {
+      name: 'الاسم الكامل',
+      collegeId: 'الرقم الجامعي',
+      contactNumber: 'رقم الهاتف',
+      issue: 'وصف الشكوى أو المشكلة',
+    }
+    const missing: string[] = []
+    if (!name?.trim()) missing.push(fieldLabels.name)
+    if (!collegeId?.trim()) missing.push(fieldLabels.collegeId)
+    if (!contactNumber?.trim()) missing.push(fieldLabels.contactNumber)
+    if (!issue?.trim()) missing.push(fieldLabels.issue)
+
+    if (missing.length > 0) {
+      console.log('Validation failed: missing required fields', missing)
       return NextResponse.json(
-        { error: 'جميع الحقول مطلوبة' },
+        { error: 'الحقول المطلوبة: ' + missing.join('، ') },
         { status: 400 }
       )
     }
 
-    // Validate nationalId, collegeId, and contactNumber are digits only
-    if (!/^\d+$/.test(nationalId) || !/^\d+$/.test(collegeId) || !/^\d+$/.test(contactNumber)) {
+    // Validate collegeId and contactNumber are digits only
+    if (!/^\d+$/.test(collegeId) || !/^\d+$/.test(contactNumber)) {
       console.log('Validation failed: invalid digits')
       return NextResponse.json(
-        { error: 'رقم الهوية الوطنية ورقم الكلية ورقم الهاتف يجب أن تحتوي على أرقام فقط' },
+        { error: 'الرقم الجامعي ورقم الهاتف يجب أن يحتويان على أرقام فقط' },
         { status: 400 }
       )
     }
 
-    console.log('Creating report with data:', { name, nationalId, collegeId, contactNumber, issue })
+    console.log('Creating report with data:', { name, collegeId, contactNumber, issue })
     
     const reportData = {
       name,
-      nationalId,
       collegeId,
       contactNumber,
       issue

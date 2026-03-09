@@ -19,7 +19,6 @@ model User {
 model Report {
   id            String   @id @default(cuid())
   name          String
-  nationalId    String
   collegeId     String
   contactNumber String   @default("")
   issue         String

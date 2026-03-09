@@ -21,7 +21,6 @@ interface ReportFormProps {
 export function ReportForm({ copyText }: ReportFormProps) {
   const [formData, setFormData] = useState({
     name: "",
-    nationalId: "",
     collegeId: "",
     contactNumber: "",
     issue: "",
@@ -35,9 +34,7 @@ export function ReportForm({ copyText }: ReportFormProps) {
     const { name, value } = e.target;
 
     if (
-      (name === "nationalId" ||
-        name === "collegeId" ||
-        name === "contactNumber") &&
+      (name === "collegeId" || name === "contactNumber") &&
       !/^\d*$/.test(value)
     ) {
       return;
@@ -54,26 +51,31 @@ export function ReportForm({ copyText }: ReportFormProps) {
     setIsSubmitting(true);
     setMessage("");
 
-    // Client-side validation
-    if (
-      !formData.name.trim() ||
-      !formData.nationalId.trim() ||
-      !formData.collegeId.trim() ||
-      !formData.contactNumber.trim() ||
-      !formData.issue.trim()
-    ) {
-      setMessage("جميع الحقول مطلوبة");
+    // Client-side validation - show which fields are missing
+    const fieldLabels: Record<string, string> = {
+      name: "الاسم الكامل",
+      collegeId: "الرقم الجامعي",
+      contactNumber: "رقم الهاتف",
+      issue: "وصف الشكوى أو المشكلة",
+    };
+    const missing: string[] = [];
+    if (!formData.name.trim()) missing.push(fieldLabels.name);
+    if (!formData.collegeId.trim()) missing.push(fieldLabels.collegeId);
+    if (!formData.contactNumber.trim()) missing.push(fieldLabels.contactNumber);
+    if (!formData.issue.trim()) missing.push(fieldLabels.issue);
+
+    if (missing.length > 0) {
+      setMessage("الحقول المطلوبة: " + missing.join("، "));
       setIsSubmitting(false);
       return;
     }
 
     if (
-      !/^\d+$/.test(formData.nationalId) ||
       !/^\d+$/.test(formData.collegeId) ||
       !/^\d+$/.test(formData.contactNumber)
     ) {
       setMessage(
-        "رقم الهوية الوطنية ورقم الكلية ورقم الهاتف يجب أن تحتوي على أرقام فقط",
+        "الرقم الجامعي ورقم الهاتف يجب أن يحتويان على أرقام فقط",
       );
       setIsSubmitting(false);
       return;
@@ -92,7 +94,6 @@ export function ReportForm({ copyText }: ReportFormProps) {
         setMessage("شكراً لك, تم تقديم الشكوى أو التقرير بنجاح!");
         setFormData({
           name: "",
-          nationalId: "",
           collegeId: "",
           contactNumber: "",
           issue: "",
@@ -106,7 +107,7 @@ export function ReportForm({ copyText }: ReportFormProps) {
             errorMessage = "جميع الحقول مطلوبة";
           } else if (error.error.includes("digits")) {
             errorMessage =
-              "رقم الهوية الوطنية ورقم الكلية ورقم الهاتف يجب أن تحتوي على أرقام فقط";
+              "الرقم الجامعي ورقم الهاتف يجب أن يحتويان على أرقام فقط";
           } else if (error.error.includes("server error")) {
             errorMessage = "خطأ في الخادم، يرجى المحاولة مرة أخرى";
           } else {
@@ -165,20 +166,6 @@ export function ReportForm({ copyText }: ReportFormProps) {
               className="text-right"
             />
           </div>
-
-          {/* <div className='space-y-2'>
-            <Label htmlFor='nationalId' className="text-right">الرقم الوطني *</Label>
-            <Input
-              id='nationalId'
-              name='nationalId'
-              type='text'
-              required
-              value={formData.nationalId}
-              onChange={handleInputChange}
-              placeholder='أدخل رقمك الوطني'
-              className="text-right"
-            />
-          </div> */}
 
           <div className="space-y-2">
             <Label htmlFor="collegeId" className="text-right">
