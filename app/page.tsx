@@ -1,8 +1,10 @@
 import { ReportForm } from "@/components/ReportForm";
+import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const reportCount = await prisma.report.count();
   const copyText = `حرصًا على تنظيم الشكوى، تم إنشاء موقع إلكتروني مخصص لتقديم الشكاوى بشكل رسمي ومرتب.
 من خلال هذا الموقع، يمكن لأي شخص متضرر تعبئة البيانات المطلوبة وتوضيح الشكوى، مع إضافة أي تفاصيل إضافية في الشكوى تساعد في تعزيز فرص متابعة الشكوى والرد عليها.
 
@@ -44,8 +46,11 @@ https://iust-report.vercel.app
         </div>
 
         {/* Report Form */}
-        <div className="flex justify-center px-2 md:px-0 animate-fade-up animate-delay-[400ms] animate-ease-out">
+        <div className="flex flex-col items-center px-2 md:px-0 animate-fade-up animate-delay-[400ms] animate-ease-out gap-4">
           <ReportForm copyText={copyText} />
+          <p className="text-center text-gray-600 text-sm md:text-base">
+            جميع تقارير المشاكل المقدمة ({reportCount} إجمالي)
+          </p>
         </div>
 
         {/* Footer */}

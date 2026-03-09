@@ -74,9 +74,7 @@ export function ReportForm({ copyText }: ReportFormProps) {
       !/^\d+$/.test(formData.collegeId) ||
       !/^\d+$/.test(formData.contactNumber)
     ) {
-      setMessage(
-        "الرقم الجامعي ورقم الهاتف يجب أن يحتويان على أرقام فقط",
-      );
+      setMessage("الرقم الجامعي ورقم الهاتف يجب أن يحتويان على أرقام فقط");
       setIsSubmitting(false);
       return;
     }
