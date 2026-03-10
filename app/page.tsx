@@ -50,7 +50,8 @@ https://iust-report.vercel.app
           {/* Progress bar - نسبة الطلاب */}
           <div className="w-full max-w-md space-y-2">
             <p className="text-center text-gray-600 text-sm font-medium">
-              نسبة الطلاب المقدمة للشكاوى ({reportCount} إجمالي)
+              نسبة الطلاب المقدمة للشكاوى ({reportCount}/150 طالب) —{" "}
+              {Math.round(Math.min((reportCount / 150) * 100, 100))}%
             </p>
             <div className="relative">
               <div className="relative h-6 rounded-full bg-gray-200">
