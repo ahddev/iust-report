@@ -53,6 +53,28 @@ https://iust-report.vercel.app
           <p className="text-center text-gray-600 text-sm md:text-base">
             جميع تقارير المشاكل المقدمة ({reportCount} إجمالي)
           </p>
+
+          {/* Progress bar - نسبة الطلاب */}
+          <div className="w-full max-w-md space-y-2">
+            <p className="text-center text-gray-600 text-sm font-medium">
+              نسبة الطلاب
+            </p>
+            <div className="relative">
+              <div className="relative h-6 rounded-full bg-gray-200">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#005072] to-teal-600 transition-all duration-500"
+                  style={{ width: `${Math.min((reportCount / 150) * 100, 100)}%` }}
+                />
+                {/* Center marker - small | at 50% */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-600 text-sm font-bold">
+                  |
+                </div>
+              </div>
+              <p className="text-center text-gray-500 text-xs mt-1">
+                على الاقل 75 شكوى
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}
