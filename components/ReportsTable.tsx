@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import ExcelJS from 'exceljs'
-import { Download } from 'lucide-react'
+import { Download, ChevronDown } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -120,6 +120,9 @@ export function ReportsTable() {
     URL.revokeObjectURL(url)
   }
 
+  const expandAll = () => setExpandedIssues(new Set(reports.map((r) => r.id)))
+  const collapseAll = () => setExpandedIssues(new Set())
+
   const toggleIssueExpansion = (reportId: string) => {
     setExpandedIssues(prev => {
       const newSet = new Set(prev)
@@ -175,15 +178,34 @@ export function ReportsTable() {
               جميع تقارير المشاكل المقدمة ({reports.length} إجمالي)
             </CardDescription>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleExportExcel}
-            disabled={reports.length === 0}
-            className="border-[#005072] text-[#005072] hover:bg-[#005072] hover:text-white shrink-0"
-          >
-            <Download className="size-4" />
-            تصدير إلى Excel
-          </Button>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <Button
+              variant="outline"
+              onClick={expandAll}
+              disabled={reports.length === 0}
+              className="border-[#005072] text-[#005072] hover:bg-[#005072] hover:text-white"
+            >
+              <ChevronDown className="size-4" />
+              توسيع الكل
+            </Button>
+            <Button
+              variant="outline"
+              onClick={collapseAll}
+              disabled={reports.length === 0}
+              className="border-[#005072] text-[#005072] hover:bg-[#005072] hover:text-white"
+            >
+              طي الكل
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExportExcel}
+              disabled={reports.length === 0}
+              className="border-[#005072] text-[#005072] hover:bg-[#005072] hover:text-white"
+            >
+              <Download className="size-4" />
+              تصدير إلى Excel
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
