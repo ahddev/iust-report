@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import * as XLSX from 'xlsx'
+import { Download } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 
 interface Report {
   id: string
@@ -47,6 +50,23 @@ export function ReportsTable() {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const handleExportExcel = () => {
+    const headers = ['الاسم', 'رقم جامعي', 'رقم الهاتف', 'المشكلة', 'تاريخ التقديم']
+    const rows = reports.map((report) => [
+      report.name,
+      report.collegeId,
+      report.contactNumber,
+      report.issue,
+      formatDate(report.createdAt)
+    ])
+    const data = [headers, ...rows]
+    const ws = XLSX.utils.aoa_to_sheet(data)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'التقارير')
+    const dateStr = new Date().toISOString().slice(0, 10)
+    XLSX.writeFile(wb, `reports-${dateStr}.xlsx`)
   }
 
   const toggleIssueExpansion = (reportId: string) => {
@@ -97,10 +117,23 @@ export function ReportsTable() {
   return (
     <Card className="w-full" dir="rtl">
       <CardHeader>
-        <CardTitle className="text-right">التقارير المقدمة</CardTitle>
-        <CardDescription className="text-right">
-          جميع تقارير المشاكل المقدمة ({reports.length} إجمالي)
-        </CardDescription>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <CardTitle className="text-right">التقارير المقدمة</CardTitle>
+            <CardDescription className="text-right">
+              جميع تقارير المشاكل المقدمة ({reports.length} إجمالي)
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleExportExcel}
+            disabled={reports.length === 0}
+            className="border-[#005072] text-[#005072] hover:bg-[#005072] hover:text-white shrink-0"
+          >
+            <Download className="size-4" />
+            تصدير إلى Excel
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {reports.length === 0 ? (
