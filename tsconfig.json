@@ -30,6 +30,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "exceljs.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

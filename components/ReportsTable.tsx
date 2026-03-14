@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import { Download } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -52,21 +52,72 @@ export function ReportsTable() {
     })
   }
 
-  const handleExportExcel = () => {
-    const headers = ['الاسم', 'رقم جامعي', 'رقم الهاتف', 'المشكلة', 'تاريخ التقديم']
-    const rows = reports.map((report) => [
-      report.name,
-      report.collegeId,
-      report.contactNumber,
-      report.issue,
-      formatDate(report.createdAt)
-    ])
-    const data = [headers, ...rows]
-    const ws = XLSX.utils.aoa_to_sheet(data)
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'التقارير')
-    const dateStr = new Date().toISOString().slice(0, 10)
-    XLSX.writeFile(wb, `reports-${dateStr}.xlsx`)
+  const handleExportExcel = async () => {
+    const workbook = new ExcelJS.Workbook()
+    const worksheet = workbook.addWorksheet('التقارير', { views: [{ rightToLeft: true }] })
+
+    // Column definitions with widths
+    worksheet.columns = [
+      { header: 'الاسم', key: 'name', width: 22 },
+      { header: 'رقم جامعي', key: 'collegeId', width: 14 },
+      { header: 'رقم الهاتف', key: 'contactNumber', width: 16 },
+      { header: 'المشكلة', key: 'issue', width: 55 },
+      { header: 'تاريخ التقديم', key: 'createdAt', width: 22 }
+    ]
+
+    // Style header row: bold, brand color background, white text
+    const headerRow = worksheet.getRow(1)
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 }
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF005072' }
+    }
+    headerRow.alignment = { horizontal: 'right', vertical: 'middle', wrapText: true }
+    headerRow.height = 28
+
+    // Add data rows
+    reports.forEach((report) => {
+      worksheet.addRow({
+        name: report.name,
+        collegeId: report.collegeId,
+        contactNumber: report.contactNumber,
+        issue: report.issue,
+        createdAt: formatDate(report.createdAt)
+      })
+    })
+
+    // Style data rows: right align, wrap text for issue column
+    worksheet.eachRow((row: { alignment?: object; getCell: (n: number) => { alignment?: object } }, rowNumber: number) => {
+      if (rowNumber > 1) {
+        row.alignment = { horizontal: 'right', vertical: 'top', wrapText: true }
+        row.getCell(4).alignment = { horizontal: 'right', vertical: 'top', wrapText: true }
+      }
+    })
+
+    // Add borders to all cells
+    worksheet.eachRow((row: { eachCell: (fn: (cell: { border?: object }) => void) => void }) => {
+      row.eachCell((cell: { border?: object }) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        }
+      })
+    })
+
+    // Download (browser)
+    const buffer = await workbook.xlsx.writeBuffer()
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `reports-${new Date().toISOString().slice(0, 10)}.xlsx`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const toggleIssueExpansion = (reportId: string) => {
